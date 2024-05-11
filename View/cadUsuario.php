@@ -19,12 +19,12 @@
             <option value="0">Admnistrador</option>
             <option value="0">Comum</option>
         </select><br/><br/>
-        <input type="submit" name="btnSalvar" id="btnSalvar">
+        <input type="submit" name="btn_salvar" id="btn_salvar">
     </form>
  
     <?php
-    if(isset($_POST['bnt_salvar'])){
-        require_once '../control/usuarioController.php';
+    if(isset($_POST['btn_salvar'])){
+        require_once '../controller/usuarioController.php';
         call_user_func(array('usuarioController','salvar'));
     }
  

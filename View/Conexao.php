@@ -1,6 +1,6 @@
 <?php
 class Conexao{
-    private $servername = "locahost:3306";
+    private $servername = "localhost:3306";
     private $username = "root";
     private $password = "HORTETEC_115";
     private $database = "imobiliaria";

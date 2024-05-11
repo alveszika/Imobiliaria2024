@@ -1,7 +1,7 @@
 <?php
 
 require_once 'banco.php';
-require_once '../conexao.php';
+require_once '../View/Conexao.php';
 
 class Usuario extends Banco{
 
@@ -44,18 +44,21 @@ class Usuario extends Banco{
 
     public function save(){
         $result = false;
-
-        //cria um objeto do tipo conexao
         $conexao = new conexao();
-        //cria query de inserção passando os atributos que serão armazenados
-        $query = "insert into usuario (id, login, senha, permissao) values (null, :login,:senha,:permissao)";
-        //cria a conexao com o banco de dados
         if($conn = $conexao->getConnection()){
-            //prepara a query para a execução
-            $stmt = $conn->prepare($query);
-            //executa query
-            if($stmt->execute(array(':login' => $this->login, ':senha' => $this->senha, ':permissao' => $this->permissao))){
-                $result = $stmt->rowCount();
+            if ($this->id > 0){
+                $query = "update usuario set login = :login, senha = :senha, permissao = :permissao where id = :id";
+                $stmt = $conn->prepare($query);
+                if ($stmt->execute(array(':login' => $this ->login, ':senha' => $this->senha, ':permisao' => $this->permissao, ':id' =>$this->id))){
+                    $result = $stmt->rowCount();
+                }
+            } else {
+                $query = "INSERT into usuario (id, login, senha, permissao) values (null, :login, :senha, :permissao)";
+                $stmt = $conn-> prepare($query);
+                if ($stmt->execute(array(':login' => $this->login, ':senha' => $this->senha, 'permissao' => $this->permissao))){
+                    $result = $stmt->rowCount();
+
+                }
             }
         }
         return $result;
@@ -66,7 +69,16 @@ class Usuario extends Banco{
     }
 
     public function find($id){
-
+        $conexao = new conexao();
+        $conn = $conexao->getConection();
+        $query = "SELECT * from usuario where id = :id";
+        $stmt = $conn->prepare($query);
+        if($stmt->execute(array(':id' => $id))){
+            $result = $stmt->fetchObject(Usuario::class);
+        }else{
+            $result = false;
+        }
+        return $result;
     }
 
     public function listAll(){

@@ -14,7 +14,7 @@
             //importa o UsuarioController.php
             require_once '../controller/usuarioController.php';
             //chama uma funçao php que permite informar a classe e o método que será acionado
-            $usuarios = call_user_func(array('usuarioController','listar'));
+            $usuarios = call_user_func(array('UsuarioController','listar'));
             //verifica se houve algum retorno
             if (isset($usuarios)){
                 foreach($usuarios as $usuario){
@@ -22,7 +22,7 @@
                     <tr>
                         <!-- Como o retorno é um objeto, devemos chamar os get para mostrar o resultado -->
                         <td><?php echo $usuario->getLogin(); ?></td>
-                        <td><?php echo $usuario->gePermissao(); ?></td>
+                        <td><?php echo $usuario->getPermissao(); ?></td>
                         <td>
                             <a href="">Editar</a>
                             <a href="">Excluir</a>
