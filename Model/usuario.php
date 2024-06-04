@@ -1,115 +1,134 @@
 <?php
 
 require_once 'banco.php';
-require_once '../View/Conexao.php';
+require_once 'View/Conexao.php';
 
-class Usuario extends Banco{
-
+class usuario extends banco{
+ 
     private $id;
     private $login;
     private $senha;
     private $permissao;
-
+ 
     public function getId(){
         return $this->id;
     }
-
+ 
     public function setId($id){
         $this->id = $id;
     }
-
+ 
     public function getLogin(){
         return $this->login;
     }
-
+ 
     public function setLogin($login){
         $this->login = $login;
     }
-
+ 
     public function getSenha(){
         return $this->senha;
     }
-
+ 
     public function setSenha($senha){
         $this->senha = $senha;
     }
-
+ 
     public function getPermissao(){
         return $this->permissao;
     }
-
+ 
     public function setPermissao($permissao){
         $this->permissao = $permissao;
     }
-
+ 
     public function save(){
         $result = false;
+        // Cria um objeto do tipo conexão
         $conexao = new conexao();
-        if($conn = $conexao->getConnection()){
-            if ($this->id > 0){
-                $query = "update usuario set login = :login, senha = :senha, permissao = :permissao where id = :id";
-                $stmt = $conn->prepare($query);
-                if ($stmt->execute(array(':login' => $this ->login, ':senha' => $this->senha, ':permisao' => $this->permissao, ':id' =>$this->id))){
-                    $result = $stmt->rowCount();
-                }
-            } else {
-                $query = "INSERT into usuario (id, login, senha, permissao) values (null, :login, :senha, :permissao)";
-                $stmt = $conn-> prepare($query);
-                if ($stmt->execute(array(':login' => $this->login, ':senha' => $this->senha, 'permissao' => $this->permissao))){
-                    $result = $stmt->rowCount();
-
-                }
+ 
+        // Cria a conexão com o banco de dados
+        if($conn = $conexao->getConection()){
+        //Cria queryde update passando os atributos que serão atualizados
+        $query = "UPDATE usuario SET login = :login, senha = :senha, permissao = :permissao WHERE id = :id";
+            //Prepara query para execução
+            $stmt = $conn->prepare($query);
+            //Executa a query
+            if($stmt->execute(array(':login' => $this->login, ':senha' => $this->senha, ':permissao' => $this->permissao, ':id' => $this->id))){
+                $result = $stmt->rowCount();
             }
+ 
+        }else{
+            //Cria query de inserção passando os atributos que serão armazenados
+            $query = "insert into usuario (id, login, senha, permissao) values (null,:login,:senha,:permissao)";
+            //Prepara a query para a execução
+            $stmt = $conn->prepare($query);
+            //Executa a query
+            if($stmt->execute(array(':login' => $this->login, ':senha' => $this->senha, ':permissao' => $this->permissao))){
+                $result = $stmt->rowCount();
+            }
+ 
+        }
+    return $result;
+    }
+ 
+    public function remove($id){
+ 
+        $result = false;
+        $conexao = new Conexao();
+        $conn = $conexao->gerConection();
+        $query = "DELETE FROM usuario where id = :id";
+         $stmt = $conn->prepare($query);
+        if($stmt->execute(array(':id' =>$id))){
+            $result = true;
         }
         return $result;
     }
-
-    public function remove($id){
-
-    }
-
+ 
     public function find($id){
+        //Cria um objeto do tipo conexão
+        $conexao = new conexao();
+        //Cria a conexão com o banco de dados
+        $conn = $conexao->getConection();
+        //Cria a query de seleção
+        $query = "SELECT * from usuario where id = :id";
+        //Prepara a query para a execução
+        $stmt = $conn->prepare($query);
+        //Executa a query
+        if($stmt->execute(array(':id' => $id))){
+            //Verifica se houve algum resgistro encontrado
+            if($stmt->rowCount() > 0) {
+            //O resultado da busca será retornado como um objeto de classe
+            $result = $stmt->fetchObject(usuario::class);
+            }else{
+                $result = false;
+            }
+        return $result;
+ 
+        }
+    }
+ 
+    public function listAll(){
         $conexao = new conexao();
         $conn = $conexao->getConection();
-        $query = "SELECT * from usuario where id = :id";
+        $query = "select * from usuario";
         $stmt = $conn->prepare($query);
-        if($stmt->execute(array(':id' => $id))){
-            $result = $stmt->fetchObject(Usuario::class);
+        $result = array();
+ 
+        if ($stmt->execute()){
+            while ($rs = $stmt->fetchObject(usuario::class)) {
+                $result[] = $rs;
+            }
         }else{
             $result = false;
         }
+ 
         return $result;
     }
-
-    public function listAll(){
-        //cria um objeto do tipo conexao
-        $conexao = new Conexao();
-        //cria a conexao com o banco de dados
-        $conn = $conexao->getConnection();
-        //cria querry de seleçao
-        $query = "SELECT * FROM usuario";
-        //prepara a querry para a execução
-        $stmt = $conn->prepare($query);
-        //cria um array para receber o resultado da seleção
-        $result = array();
-        //executa o array
-        if($stmt->execute()){
-            //o resultado da busca será retornado com um objeto da classe 
-            while ($rs = $stmt->fetchObject(Usuario::class)){
-                //armazena esse objeto em uma posição do vetor
-                $result[] = $rs;
-            }
-        }
-        else{
-            $result = false;
-        }
-        return $result;
-    }
-
+ 
     public function count(){
-
+ 
     }
-
 }
-
+ 
 ?>

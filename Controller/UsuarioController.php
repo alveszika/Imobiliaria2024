@@ -1,5 +1,6 @@
 <?php
-require_once '../model/usuario.php';
+
+require_once 'model/usuario.php';
 
 class UsuarioController{
     /**
@@ -10,6 +11,7 @@ class UsuarioController{
         $usuario = new Usuario;
 
         //armazena as informações do $_POST via set
+        $usuario->setId($_POST['id']);
         $usuario->setLogin($_POST['login']);
         $usuario->setSenha($_POST['senha']);
         $usuario->setPermissao($_POST['permissao']);
@@ -22,11 +24,22 @@ class UsuarioController{
     /**
     * Lista os usuários
     */
+    public function excluir($id){
+        $usuario = new Usuario;
+        $usuario = $usuario->remove($id);
+    }
+
     public static function listar(){
         //cria um objeto do tipo usuario
         $usuarios = new Usuario;
         //chama o método listAll()
         return $usuarios->listAll();
+    }
+
+    public function editar($id){
+        $usuario = new Usuario;
+        $usuario = $usuario->find($id);
+        return $usuario;
     }
         
 }
